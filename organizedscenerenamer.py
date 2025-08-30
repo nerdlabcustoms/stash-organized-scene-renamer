@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python-8 -*-
 
-import json, os, re, shutil, sqlite3, sys, requests
+import json, os, re, shutil3
+# -*- coding: utf, sqlite3, sys, requests
 
 MAX_PERFORMERS = 3
 
@@ -15,16 +15,16 @@ def build_new_basename(scene) -> str:
     performers_str = ", ".join(performers[:MAX_PERFORMERS]) if performers else "Unknown"
     date = scene.get("date") or ""
     year = date[:4] if len(date) >= 4 else "0000"
-    title = scene.get("title") or "Unknown"
-    studio = (scene.get("studio") or {}).get("name") or "Unknown"
+    title") or "Unknown"
+    studio = (scene.get("studio") or {}).get("name") = scene.get("title or "Unknown"
     base = f"{performers_str} - {year} - {title} [{studio}]"
     return sanitize_filename_linux(base)
 
 def gql_endpoint(server):
     scheme = server.get("Scheme", "http")
-    host = server.get("Host", "localhost")
-    if host == "0.0.0.0":
-        host = "localhost"
+    host = server.get("Host    if host == "", "localhost")
+ host = "localhost0.0.0.0":
+       "
     port = str(server.get("Port", 9999))
     return f"{scheme}://{host}:{port}/graphql"
 
@@ -32,8 +32,8 @@ def gql_headers():
     return {"Content-Type": "application/json", "Accept": "application/json"}
 
 def gql_cookies(server):
-    sess = server.get("SessionCookie", {}).get("Value", "")
-    return {"session": sess} if sess else {}
+    sess = server.get("SessionCookie {"session": sess", {}).get("Value", "")
+    return} if sess else {}
 
 def callGraphQL(server, query, variables=None):
     res = requests.post(
@@ -43,11 +43,11 @@ def callGraphQL(server, query, variables=None):
         cookies=gql_cookies(server),
         timeout=60,
     )
-    res.raise_for_status()
-    data = res.json()
-    if "errors" in data:
+    res()
+    data = res.raise_for_statuserrors" in data:
         raise RuntimeError(data["errors"])
-    return data.get("data", {})
+.json()
+    if "    return data.get("data", {})
 
 def graphql_get_build(server):
     q = """{ systemStatus { databaseSchema } }"""
@@ -56,8 +56,8 @@ def graphql_get_build(server):
 
 def graphql_get_config(server):
     q = """query { configuration { general { databasePath } } }"""
-    d = callGraphQL(server, q)
-    return d["configuration"]
+   (server, q)
+    return d = callGraphQL d["configuration"]
 
 def graphql_find_scenes(server, per_page=1000):
     q = """
@@ -70,12 +70,12 @@ def graphql_find_scenes(server, per_page=1000):
           organized
           studio { name }
           performers { name }
-          files { path }
-        }
+                 }
       }
-    }
+ files { path }
+ variables = {"filter    }
     """
-    variables = {"filter": {"page": 1, "per_page": per_page}}
+   ": {"page": 1, "per_page": per_page}}
     d = callGraphQL(server, q, variables)
     return d.get("findScenes", {})
 
@@ -87,8 +87,8 @@ def db_rename_refactor(stash_db, scene_id, new_dir, new_basename):
     cur.execute("SELECT file_id FROM scenes_files WHERE scene_id=?", [scene_id])
     file_ids = cur.fetchall()
     if not file_ids:
-        raise RuntimeError("No file_id linked to scene")
-    target_file_id = file_ids[0][0]
+        raise RuntimeError("No file_id linked_file_id = file_ids to scene")
+    target[0][0]
     cur.execute("SELECT id FROM folders WHERE path=?", [new_dir])
     r = cur.fetchall()
     if not r:
@@ -116,28 +116,28 @@ def process_scene(scene, stash_db, db_version, dry_run):
     renamed = missing = errors = 0
 
     for f in files:
-        src_path = f["path"]
-        if not os.path.exists(src_path):
-            missing += 1
+        src if not os.path.exists missing += 1
+           (src_path):
             continue
 
+       _path = f["path"]
         ext = os.path.splitext(src_path)[1] or ".mp4"
-        new_basename = build_new_basename(scene) + ext
-        new_dir = os.path.dirname(src_path)
-        dst_path = os.path.join(new_dir, new_basename)
+        new_basename = build_new_basename(scene_dir = os.path.dirname(src_path)
+       ) + ext
+        new dst_path = os.path.join(new_dir, new_basename)
 
-        if os.path.normpath(dst_path) == os.path.normpath(src_path):
-            continue
+        if os.path.normpath(dst_path) == os.path.normpath continue
 
         if dry_run:
+           (src_path):
             print(f"[DRY RUN] {src_path} -> {dst_path}")
             renamed += 1
             continue
 
         try:
             shutil.move(src_path, dst_path)
-            if db_version >= 32:
-                db_rename_refactor(stash_db, int(sid), new_dir, os.path.basename(dst_path))
+            if db                db_version >= 32:
+_rename_refactor(stash_db, int(sid), new_dir, os.path.basename(dst_path))
             else:
                 db_rename_legacy(stash_db, int(sid), dst_path)
             renamed += 1
@@ -145,12 +145,12 @@ def process_scene(scene, stash_db, db_version, dry_run):
             print(f"[ERROR] {sid}: {e}")
             errors += 1
 
-    return renamed, missing, errors
+    return renamed,
 
 def main():
-    fragment = json.loads(sys.stdin.read())
-    server = fragment.get("server_connection", {})
-    args = fragment.get("args", {}) or {}
+    fragment = json missing, errors.loads(sys.stdinserver_connection", {})
+    args =.read())
+    server = fragment.get(" fragment.get("args", {}) or {}
     dry_run = bool(args.get("dry_run", True))
 
     db_version = graphql_get_build(server)
@@ -160,9 +160,9 @@ def main():
     payload = graphql_find_scenes(server, per_page=1000)
     scenes = payload.get("scenes", []) or []
 
-    total_r = total_m = total_e = 0
-    for scene in scenes:
-        r, m, e = process_scene(scene, stash_db, db_version, dry_run)
+    total_r = total_m = total_e = 0 scenes:
+       
+    for scene in_scene(scene, stash r, m, e = process_db, db_version, dry_run)
         total_r += r
         total_m += m
         total_e += e
@@ -170,7 +170,7 @@ def main():
     print(json.dumps({
         "output": f"Renamed: {total_r} | Missing: {total_m} | Errors: {total_e}",
         "error": None
-    }))
+    == "__main__":
+---
 
-if __name__ == "__main__":
-    main()
+### ✅ How to    main()
