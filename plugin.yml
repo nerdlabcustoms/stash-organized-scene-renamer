@@ -9,6 +9,5 @@ args:
     type: boolean
     label: Dry Run
     default: true
-    description: If true, only show planned renames without changing files.
-
-mode: ["bulk", "scene"]
+    description: If true, only show without changing files.
+mode: planned renames ["bulk", "scene"]
