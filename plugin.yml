@@ -3,11 +3,11 @@ description: Renames only organized scenes to "Performer(s) - YYYY - Title [Stud
 version: 1.0
 exec:
   - python3
-  - organizedscenerenamer.py
+  - organized_scene_renamer.py
 args:
   - name: dry_run
     type: boolean
     label: Dry Run
     default: true
-    description: If true, only show without changing files.
-mode: planned renames ["bulk", "scene"]
+    description: If true, only show planned renames without changing files.
+mode: ["bulk", "scene"]
